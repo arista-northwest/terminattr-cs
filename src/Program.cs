@@ -2,6 +2,7 @@
 using Grpc.Core;
 using Gnmi;
 using GnmiExt;
+using System.Collections.Generic;
 
 
 namespace terminattr
@@ -22,26 +23,30 @@ namespace terminattr
 
             //for response in self._stub.Subscribe(requests, self._timeout):
             //    yield response
+            
+            Path path = new Path();
+            
+            path.Elem.Add(new PathElem { Name = "Sysdb" });
+            path.Elem.Add(new PathElem { Name = "sys" });
+            path.Elem.Add(new PathElem { Name = "net" });
+            path.Elem.Add(new PathElem { Name = "config" });
 
-            Subscription subscription = new Subscription();
-            Path subpath = new Path();
-            subpath.Target = "/Sysdb";
-
-            subscription.Path = subpath;
-
-            SubscriptionList subls = new SubscriptionList();
-
-            subls.Mode = SubscriptionList.Types.Mode.Stream;
-            subls.Prefix = subpath;
-
-            SubscribeRequest subreq = new SubscribeRequest();
-            subreq.Subscribe = subls;
-
-            //foreach (var resp in subreq.)
-            //{
-            //    resp.
-            //}
-            client.Subscribe();
+            GetRequest getreq = new GetRequest();
+            getreq.Path.Add(path);
+            GetResponse resp = client.Get(getreq);
+            Console.WriteLine("=============================");
+            foreach (Notification item in resp.Notification)
+            {
+                
+                foreach (Update upd in item.Update)
+                {
+                    Console.WriteLine("-------");
+                    Console.WriteLine(upd.Path);
+                    //Console.WriteLine(upd.Value.Type);
+                    Console.WriteLine(upd.Value.Value_.ToStringUtf8());
+                }
+            }
+            Console.Read();
         }
     }
 }
