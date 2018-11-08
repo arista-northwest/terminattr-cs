@@ -24,7 +24,7 @@ namespace terminattr
             pathString = Console.ReadLine();
             if (pathString.Length == 0)
             {
-                pathString = @"environment/temperature/config";
+                pathString = @"environment";
             }
 
 
@@ -51,9 +51,9 @@ namespace terminattr
             Path path = new Path();
 
             path.Elem.Add(new PathElem { Name = "Sysdb" });
-            path.Elem.Add(new PathElem { Name = "sys" });
-            path.Elem.Add(new PathElem { Name = "net" });
-            path.Elem.Add(new PathElem { Name = "config" });
+            //path.Elem.Add(new PathElem { Name = "sys" });
+            //path.Elem.Add(new PathElem { Name = "net" });
+            //path.Elem.Add(new PathElem { Name = "config" });
 
             if ( method == "get")
             {
@@ -99,7 +99,7 @@ namespace terminattr
                     subscriptionPath.Elem.Add(pathElem);
                 }
 
-                subscriptionList.Subscription.Add(new Subscription() { Mode = SubscriptionMode.Sample, Path = subscriptionPath });
+                subscriptionList.Subscription.Add(new Subscription() { Mode = SubscriptionMode.OnChange, Path = subscriptionPath });
 
                 SubscribeRequest subscribeRequest = new SubscribeRequest { Subscribe = subscriptionList };
                 IAsyncStreamReader<SubscribeResponse> responseStream = null;
@@ -127,19 +127,19 @@ namespace terminattr
                     {
                         Environment.Exit(-1);
                     }
-
+                 
                     SubscribeResponse currResponse = responseStream.Current;
                     if (currResponse.Update != null)
                     {
                         var elements = currResponse.Update.Prefix.Elem;
                         var elementsOldFormat = currResponse.Update.Prefix.Element;
                         var prefixPathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
-
-                        foreach (var update in currResponse.Update.Update)
-                        {
-                            elementsOldFormat = update.Path.Element;
-                            var updatePathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
-                            Console.WriteLine("{0}:{1}", $"{prefixPathString},{updatePathString}", update.Value.Value_.ToStringUtf8());
+ 
+                    foreach (var update in currResponse.Update.Update)
+                    {
+                        elementsOldFormat = update.Path.Element;
+                        var updatePathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
+                        Console.WriteLine("{0}:{1}", $"{prefixPathString},{updatePathString}", update.Value.Value_.ToStringUtf8());
                         }
                     }
                 }
