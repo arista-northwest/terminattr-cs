@@ -28,7 +28,11 @@ namespace terminattr
             // Default path for testing...
             if (pathString.Length == 0)
             {
+<<<<<<< HEAD
                 pathString = @"/Sysdb/environment";
+=======
+                pathString = @"environment";
+>>>>>>> 08299202968de7518985997501fba630d994c055
             }
             
             Channel channel = new Channel(dut, 6042, ChannelCredentials.Insecure);
@@ -44,6 +48,7 @@ namespace terminattr
 
             Path path = new Path();
 
+<<<<<<< HEAD
             foreach (var element in pathString.Split('/').ToList())
             {
                 string fixElement = element.Trim();
@@ -55,6 +60,12 @@ namespace terminattr
                 PathElem pathElem = new PathElem { Name = fixElement };
                 path.Elem.Add(pathElem);
             }
+=======
+            path.Elem.Add(new PathElem { Name = "Sysdb" });
+            //path.Elem.Add(new PathElem { Name = "sys" });
+            //path.Elem.Add(new PathElem { Name = "net" });
+            //path.Elem.Add(new PathElem { Name = "config" });
+>>>>>>> 08299202968de7518985997501fba630d994c055
 
             if ( method == "get")
             {
@@ -85,7 +96,23 @@ namespace terminattr
 
                 
 
+<<<<<<< HEAD
                 subscriptionList.Subscription.Add(new Subscription() { Mode = SubscriptionMode.OnChange, Path = path });
+=======
+                foreach (var element in pathString.Split('/').ToList())
+                {
+                    string fixElement = element.Trim();
+                    if (element.Contains('\\'))
+                    {
+                        fixElement = element.Replace('\\', '/');
+                    }
+
+                    PathElem pathElem = new PathElem { Name = fixElement };
+                    subscriptionPath.Elem.Add(pathElem);
+                }
+
+                subscriptionList.Subscription.Add(new Subscription() { Mode = SubscriptionMode.OnChange, Path = subscriptionPath });
+>>>>>>> 08299202968de7518985997501fba630d994c055
 
                 SubscribeRequest subscribeRequest = new SubscribeRequest { Subscribe = subscriptionList };
                 IAsyncStreamReader<SubscribeResponse> responseStream = null;
@@ -117,8 +144,12 @@ namespace terminattr
                         Console.WriteLine("!responseStream.MoveNext().Result");
                         Environment.Exit(-1);
                     }
+<<<<<<< HEAD
 
                     Console.WriteLine("2");
+=======
+                 
+>>>>>>> 08299202968de7518985997501fba630d994c055
                     SubscribeResponse currResponse = responseStream.Current;
                     Console.WriteLine("3");
                     if (currResponse.Update != null)
@@ -127,6 +158,7 @@ namespace terminattr
                         var elements = currResponse.Update.Prefix.Elem;
                         var elementsOldFormat = currResponse.Update.Prefix.Element;
                         var prefixPathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
+<<<<<<< HEAD
 
                         foreach (var update in currResponse.Update.Update)
                         {
@@ -134,6 +166,14 @@ namespace terminattr
                             elementsOldFormat = update.Path.Element;
                             var updatePathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
                             Console.WriteLine("{0}:{1}", $"{prefixPathString},{updatePathString}", update.Value.Value_.ToStringUtf8());
+=======
+ 
+                    foreach (var update in currResponse.Update.Update)
+                    {
+                        elementsOldFormat = update.Path.Element;
+                        var updatePathString = elementsOldFormat.Aggregate(string.Empty, (current, element) => current + "/" + element);
+                        Console.WriteLine("{0}:{1}", $"{prefixPathString},{updatePathString}", update.Value.Value_.ToStringUtf8());
+>>>>>>> 08299202968de7518985997501fba630d994c055
                         }
                     }
 
